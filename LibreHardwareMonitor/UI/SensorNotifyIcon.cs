@@ -162,7 +162,15 @@ public class SensorNotifyIcon : IDisposable
         switch (Sensor.SensorType)
         {
             case SensorType.Temperature:
-                return _unitManager.TemperatureUnit == TemperatureUnit.Fahrenheit ? $"{UnitManager.CelsiusToFahrenheit(Sensor.Value):F0}" : $"{Sensor.Value:F0}";
+                {
+                    float? displayValue = _unitManager.ApplyTemperatureMultiplier(Sensor.Value);
+                    if (!displayValue.HasValue)
+                        return "-";
+
+                    return _unitManager.TemperatureUnit == TemperatureUnit.Fahrenheit
+                        ? $"{UnitManager.CelsiusToFahrenheit(displayValue):F0}"
+                        : $"{displayValue.Value:F0}";
+                }
             case SensorType.TimeSpan:
                 return $"{TimeSpan.FromSeconds(Sensor.Value.Value):g}";
             case SensorType.Timing:
@@ -294,12 +302,24 @@ public class SensorNotifyIcon : IDisposable
             case SensorType.Timing: format = "\n{0}: {0:F3} ns"; break;
         }
 
-        string formattedValue = string.Format(format, Sensor.Name, Sensor.Value);
+        float? displayValue = Sensor.Value;
+        if (Sensor.SensorType == SensorType.Temperature)
+            displayValue = _unitManager.ApplyTemperatureMultiplier(displayValue);
 
-        if (Sensor.SensorType == SensorType.Temperature && _unitManager.TemperatureUnit == TemperatureUnit.Fahrenheit)
+        string formattedValue;
+        if (!displayValue.HasValue)
         {
-            format = "\n{0}: {1:F1} °F";
-            formattedValue = string.Format(format, Sensor.Name, UnitManager.CelsiusToFahrenheit(Sensor.Value));
+            formattedValue = $"\n{Sensor.Name}: -";
+        }
+        else
+        {
+            formattedValue = string.Format(format, Sensor.Name, displayValue);
+
+            if (Sensor.SensorType == SensorType.Temperature && _unitManager.TemperatureUnit == TemperatureUnit.Fahrenheit)
+            {
+                format = "\n{0}: {1:F1} °F";
+                formattedValue = string.Format(format, Sensor.Name, UnitManager.CelsiusToFahrenheit(displayValue));
+            }
         }
 
         string hardwareName = Sensor.Hardware.Name;

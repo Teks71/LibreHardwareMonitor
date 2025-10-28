@@ -605,7 +605,14 @@ public class SensorGadget : Gadget
                     {
                         string formatted;
     
-                        if (sensor.Value.HasValue)
+                        float? displayValue = sensor.Value;
+
+                        if (sensor.SensorType == SensorType.Temperature)
+                        {
+                            displayValue = _unitManager.ApplyTemperatureMultiplier(displayValue);
+                        }
+
+                        if (displayValue.HasValue)
                         {
                             string format = "";
                             switch (sensor.SensorType)
@@ -659,10 +666,10 @@ public class SensorGadget : Gadget
                                     format = "{0:F1} µS/cm";
                                     break;
                             }
-    
+
                             if (sensor.SensorType == SensorType.Temperature && _unitManager.TemperatureUnit == TemperatureUnit.Fahrenheit)
                             {
-                                formatted = $"{UnitManager.CelsiusToFahrenheit(sensor.Value):F1} °F";
+                                formatted = $"{UnitManager.CelsiusToFahrenheit(displayValue):F1} °F";
                             }
                             else if (sensor.SensorType == SensorType.Throughput)
                             {
@@ -711,7 +718,7 @@ public class SensorGadget : Gadget
                             }
                             else
                             {
-                                formatted = string.Format(format, sensor.Value);
+                                formatted = string.Format(format, displayValue);
                             }
                         }
                         else

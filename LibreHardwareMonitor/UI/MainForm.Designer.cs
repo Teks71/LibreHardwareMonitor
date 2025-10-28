@@ -471,6 +471,7 @@ namespace LibreHardwareMonitor.UI
             this.startupMenuItem,
             this.separatorMenuItem,
             this.temperatureUnitsMenuItem,
+            this.multiplyTemperaturesMenuItem,
             this.plotLocationMenuItem,
             this.strokeThicknessMenuItem,
             this.themeMenuItem,
@@ -524,6 +525,14 @@ namespace LibreHardwareMonitor.UI
             this.temperatureUnitsMenuItem.Name = "temperatureUnitsMenuItem";
             this.temperatureUnitsMenuItem.Size = new System.Drawing.Size(221, 22);
             this.temperatureUnitsMenuItem.Text = "Temperature Unit";
+            //
+            // multiplyTemperaturesMenuItem
+            //
+            this.multiplyTemperaturesMenuItem.CheckOnClick = true;
+            this.multiplyTemperaturesMenuItem.Name = "multiplyTemperaturesMenuItem";
+            this.multiplyTemperaturesMenuItem.Size = new System.Drawing.Size(221, 22);
+            this.multiplyTemperaturesMenuItem.Text = "Multiply Temperatures ×10";
+            this.multiplyTemperaturesMenuItem.Click += new System.EventHandler(this.multiplyTemperaturesMenuItem_Click);
             //
             // celsiusMenuItem
             //
@@ -1147,6 +1156,7 @@ namespace LibreHardwareMonitor.UI
         private System.Windows.Forms.ToolStripMenuItem minMenuItem;
         private System.Windows.Forms.ToolStripMenuItem maxMenuItem;
         private System.Windows.Forms.ToolStripMenuItem temperatureUnitsMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem multiplyTemperaturesMenuItem;
         private System.Windows.Forms.ToolStripSeparator webMenuItemSeparator;
         private ToolStripRadioButtonMenuItem celsiusMenuItem;
         private ToolStripRadioButtonMenuItem fahrenheitMenuItem;

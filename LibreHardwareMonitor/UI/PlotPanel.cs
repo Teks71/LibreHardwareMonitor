@@ -314,16 +314,15 @@ public class PlotPanel : UserControl
 
         DataPoint CreateDataPoint(SensorType type, SensorValue value)
         {
-            float displayedValue;
+            float? displayValue = value.Value;
+
+            if (type == SensorType.Temperature)
+                displayValue = _unitManager.ApplyTemperatureMultiplier(displayValue);
+
+            float displayedValue = displayValue.GetValueOrDefault();
 
             if (type == SensorType.Temperature && _unitManager.TemperatureUnit == TemperatureUnit.Fahrenheit)
-            {
-                displayedValue = UnitManager.CelsiusToFahrenheit(value.Value).Value;
-            }
-            else
-            {
-                displayedValue = value.Value;
-            }
+                displayedValue = UnitManager.CelsiusToFahrenheit(displayValue).GetValueOrDefault();
 
             return new DataPoint((_now - value.Time).TotalSeconds, displayedValue);
         }

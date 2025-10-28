@@ -19,6 +19,7 @@ public class UnitManager
 
     private readonly PersistentSettings _settings;
     private TemperatureUnit _temperatureUnit;
+    private float _temperatureMultiplier = 1f;
 
     public UnitManager(PersistentSettings settings)
     {
@@ -34,6 +35,23 @@ public class UnitManager
             _temperatureUnit = value;
             _settings.SetValue("TemperatureUnit", (int)_temperatureUnit);
         }
+    }
+
+    public float TemperatureMultiplier => _temperatureMultiplier;
+
+    public void SetTemperatureMultiplier(float multiplier)
+    {
+        _temperatureMultiplier = multiplier;
+    }
+
+    public float? ApplyTemperatureMultiplier(float? value)
+    {
+        if (!value.HasValue)
+        {
+            return null;
+        }
+
+        return value * _temperatureMultiplier;
     }
 
     public static float? CelsiusToFahrenheit(float? valueInCelsius)
