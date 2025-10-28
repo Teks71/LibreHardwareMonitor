@@ -298,6 +298,8 @@ public sealed partial class MainForm : Form
 
         celsiusMenuItem.Checked = _unitManager.TemperatureUnit == TemperatureUnit.Celsius;
         fahrenheitMenuItem.Checked = !celsiusMenuItem.Checked;
+        multiplyTemperaturesMenuItem.Checked = false;
+        _unitManager.SetTemperatureMultiplier(1f);
 
         Server = new HttpServer(_root,
                                 _computer,
@@ -1275,6 +1277,7 @@ public sealed partial class MainForm : Form
         celsiusMenuItem.Checked = true;
         fahrenheitMenuItem.Checked = false;
         _unitManager.TemperatureUnit = TemperatureUnit.Celsius;
+        RefreshTemperatureDisplays();
     }
 
     private void FahrenheitMenuItem_Click(object sender, EventArgs e)
@@ -1282,6 +1285,22 @@ public sealed partial class MainForm : Form
         celsiusMenuItem.Checked = false;
         fahrenheitMenuItem.Checked = true;
         _unitManager.TemperatureUnit = TemperatureUnit.Fahrenheit;
+        RefreshTemperatureDisplays();
+    }
+
+    private void multiplyTemperaturesMenuItem_Click(object sender, EventArgs e)
+    {
+        float multiplier = multiplyTemperaturesMenuItem.Checked ? 10f : 1f;
+        _unitManager.SetTemperatureMultiplier(multiplier);
+        RefreshTemperatureDisplays();
+    }
+
+    private void RefreshTemperatureDisplays()
+    {
+        treeView.Invalidate();
+        _systemTray.Redraw();
+        _gadget?.Redraw();
+        _plotPanel.InvalidatePlot();
     }
 
     private void ResetMinMaxMenuItem_Click(object sender, EventArgs e)

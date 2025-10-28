@@ -187,12 +187,20 @@ public class SensorNode : Node
     {
         if (value.HasValue)
         {
+            if (Sensor.SensorType == SensorType.Temperature)
+            {
+                float? scaled = _unitManager.ApplyTemperatureMultiplier(value);
+                if (!scaled.HasValue)
+                    return "-";
+
+                if (_unitManager.TemperatureUnit == TemperatureUnit.Fahrenheit)
+                    return $"{UnitManager.CelsiusToFahrenheit(scaled):F1} °F";
+
+                value = scaled;
+            }
+
             switch (Sensor.SensorType)
             {
-                case SensorType.Temperature when _unitManager.TemperatureUnit == TemperatureUnit.Fahrenheit:
-                    {
-                        return $"{value * 1.8 + 32:F1} °F";
-                    }
                 case SensorType.Throughput:
                     {
                         string result;
